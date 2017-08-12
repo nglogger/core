@@ -18,6 +18,12 @@
     "email": "SuperPaintmanDeveloper@gmail.com",
     "url": "https://superpaintman.com/"
   },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "lib/",
+    "!src/"
+  ],
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {

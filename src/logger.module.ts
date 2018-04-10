@@ -1,9 +1,14 @@
 'use strict';
 /* Imports */
-import { Injector, ModuleWithProviders, NgModule, Type } from '@angular/core';
+import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 
 import { Logger, TRANSPORTS } from './logger.service';
 import { Transport } from './transport';
+
+
+export function transportsFactory(...transports: Transport[]): Transport[] {
+  return transports;
+}
 
 
 @NgModule({
@@ -23,10 +28,8 @@ export class LoggerModule { // tslint:disable-line:no-unnecessary-class
         Logger,
         {
           provide: TRANSPORTS,
-          deps: [Injector],
-          useFactory(injector: Injector) {
-            return transports.map((t) => injector.get(t));
-          }
+          deps: transports,
+          useFactory: transportsFactory
         }
       ]
     };

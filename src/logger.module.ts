@@ -1,20 +1,14 @@
 'use strict';
-/** Imports */
-import { NgModule, ModuleWithProviders, Injector } from '@angular/core';
+/* Imports */
+import { Injector, ModuleWithProviders, NgModule, Type } from '@angular/core';
 
 import { Logger } from './logger.service';
 import { Transport } from './transport';
 
 
-/** Interfaces */
-export interface ITransportStatic {
-  new (...args: any[]): Transport;
-}
-
-
 @NgModule()
-export class LoggerModule {
-  static forRoot(transports: ITransportStatic[]): ModuleWithProviders {
+export class LoggerModule { // tslint:disable-line:no-unnecessary-class
+  static forRoot(transports: Array<Type<Transport>>): ModuleWithProviders {
     return {
       ngModule: LoggerModule,
       providers: [

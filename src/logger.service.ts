@@ -1,13 +1,14 @@
 'use strict';
-/** Imports */
+/* tslint:disable:ter-padded-blocks max-classes-per-file */
+/* Imports */
 import { Injectable } from '@angular/core';
 
 import { Transport } from './transport';
 
 
-/** Interfaces */
-export type IScope = string;
-export type ILevel =
+/* Interfaces */
+export type Scope = string;
+export type Level =
   | 'fatal'
   | 'error'
   | 'warn'
@@ -16,70 +17,128 @@ export type ILevel =
   | 'trace'
   | 'debug'
   ;
-export type IMeta = object | Error;
-export type ILogLevel = (scope: IScope, subject: string, meta?: IMeta) => Promise<void>;
-export type IScopedLogLevel = (subject: string, meta?: IMeta) => Promise<void>;
+export type Meta = object | Error;
+export type LogLevel = (scope: Scope, subject: string, meta?: Meta) => void;
+export type ScopedLogLevel = (subject: string, meta?: Meta) => void;
 
-export interface ILogger {
-  fatal:   ILogLevel;
-  error:   ILogLevel;
-  warn:    ILogLevel;
-  info:    ILogLevel;
-  verbose: ILogLevel;
-  trace:   ILogLevel;
-  debug:   ILogLevel;
+export interface LoggerLevels {
+  fatal:   LogLevel;
+  error:   LogLevel;
+  warn:    LogLevel;
+  info:    LogLevel;
+  verbose: LogLevel;
+  trace:   LogLevel;
+  debug:   LogLevel;
 }
 
-export interface IScopedLogger {
-  fatal:   IScopedLogLevel;
-  error:   IScopedLogLevel;
-  warn:    IScopedLogLevel;
-  info:    IScopedLogLevel;
-  verbose: IScopedLogLevel;
-  trace:   IScopedLogLevel;
-  debug:   IScopedLogLevel;
+export interface ScopedLoggerLevels {
+  fatal:   ScopedLogLevel;
+  error:   ScopedLogLevel;
+  warn:    ScopedLogLevel;
+  info:    ScopedLogLevel;
+  verbose: ScopedLogLevel;
+  trace:   ScopedLogLevel;
+  debug:   ScopedLogLevel;
+}
+
+export interface Scopable {
+  scope(scope: Scope): ScoppedLogger;
 }
 
 
-/** Loggers */
-export class ScoppedLogger implements IScopedLogger {
+/* Helpers */
+const stubUndefined = () => undefined;
+
+
+/* Loggers */
+export class ScoppedLogger implements ScopedLoggerLevels, Scopable {
   constructor(
     private _logger: Logger,
-    private _scope:  IScope
+    private _scope:  Scope
   ) {}
 
-  fatal(subject: string, meta?: IMeta)   { return this._logger.fatal(this._scope, subject, meta); }
-  error(subject: string, meta?: IMeta)   { return this._logger.error(this._scope, subject, meta); }
-  warn(subject: string, meta?: IMeta)    { return this._logger.warn(this._scope, subject, meta); }
-  info(subject: string, meta?: IMeta)    { return this._logger.info(this._scope, subject, meta); }
-  verbose(subject: string, meta?: IMeta) { return this._logger.verbose(this._scope, subject, meta); }
-  trace(subject: string, meta?: IMeta)   { return this._logger.trace(this._scope, subject, meta); }
-  debug(subject: string, meta?: IMeta)   { return this._logger.debug(this._scope, subject, meta); }
+  fatal(subject: string, meta?: Meta): void {
+    return this._logger.fatal(this._scope, subject, meta);
+  }
+
+  error(subject: string, meta?: Meta): void {
+    return this._logger.error(this._scope, subject, meta);
+  }
+
+  warn(subject: string, meta?: Meta): void {
+    return this._logger.warn(this._scope, subject, meta);
+  }
+
+  info(subject: string, meta?: Meta): void {
+    return this._logger.info(this._scope, subject, meta);
+  }
+
+  verbose(subject: string, meta?: Meta): void {
+    return this._logger.verbose(this._scope, subject, meta);
+  }
+
+  trace(subject: string, meta?: Meta): void {
+    return this._logger.trace(this._scope, subject, meta);
+  }
+
+  debug(subject: string, meta?: Meta): void {
+    return this._logger.debug(this._scope, subject, meta);
+  }
+
+  scope(scope: Scope): ScoppedLogger {
+    return new ScoppedLogger(this._logger, scope);
+  }
 }
 
 
 @Injectable()
-export class Logger implements ILogger {
+export class Logger implements LoggerLevels, Scopable {
   constructor(
     private _transports: Transport[]
   ) {}
 
-  fatal(scope: IScope, subject: string, meta?: IMeta)   { return this._log('fatal', scope, subject, meta); }
-  error(scope: IScope, subject: string, meta?: IMeta)   { return this._log('error', scope, subject, meta); }
-  warn(scope: IScope, subject: string, meta?: IMeta)    { return this._log('warn', scope, subject, meta); }
-  info(scope: IScope, subject: string, meta?: IMeta)    { return this._log('info', scope, subject, meta); }
-  verbose(scope: IScope, subject: string, meta?: IMeta) { return this._log('verbose', scope, subject, meta); }
-  trace(scope: IScope, subject: string, meta?: IMeta)   { return this._log('trace', scope, subject, meta); }
-  debug(scope: IScope, subject: string, meta?: IMeta)   { return this._log('debug', scope, subject, meta); }
+  fatal(scope: Scope, subject: string, meta?: Meta): void {
+    return this._log('fatal', scope, subject, meta);
+  }
 
-  scope(scope: IScope): ScoppedLogger {
+  error(scope: Scope, subject: string, meta?: Meta): void {
+    return this._log('error', scope, subject, meta);
+  }
+
+  warn(scope: Scope, subject: string, meta?: Meta): void {
+    return this._log('warn', scope, subject, meta);
+  }
+
+  info(scope: Scope, subject: string, meta?: Meta): void {
+    return this._log('info', scope, subject, meta);
+  }
+
+  verbose(scope: Scope, subject: string, meta?: Meta): void {
+    return this._log('verbose', scope, subject, meta);
+  }
+
+  trace(scope: Scope, subject: string, meta?: Meta): void {
+    return this._log('trace', scope, subject, meta);
+  }
+
+  debug(scope: Scope, subject: string, meta?: Meta): void {
+    return this._log('debug', scope, subject, meta);
+  }
+
+  scope(scope: Scope): ScoppedLogger {
     return new ScoppedLogger(this, scope);
   }
 
-  private _log(level: ILevel, scope: IScope, subject: string, meta?: IMeta): Promise<void> {
-    return Promise.all(this._transports.map((transport) => (
+  private _log(
+    level: Level,
+    scope: Scope,
+    subject: string,
+    meta?: Meta
+  ): void {
+    Promise.all(this._transports.map((transport) => (
       transport.log(level, scope, subject, meta)
     )))
-      .then(() => undefined);
+      .then(stubUndefined)
+      .catch(stubUndefined);
   }
 }

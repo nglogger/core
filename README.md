@@ -7,7 +7,7 @@
 [![NPM Downloads][npm-dm-image]][npm-url]
 
 
-Pluggable logger for Angular 2
+Pluggable logger for Angular 2 / 4 / 5
 
 
 --------------------------------------------------------------------------------
@@ -29,16 +29,16 @@ $ yarn add @nglogger/core
 
 ```ts
 'use strict';
-import { NgModule }           from '@angular/core';
+import { NgModule } from '@angular/core';
 
-import { LoggerModule }       from '@nglogger/core';
+import { LoggerModule } from '@nglogger/core';
 
 
 @NgModule({
   imports: [
     LoggerModule.forRoot([
       /** Transports */
-    ]),
+    ])
   ],
   bootstrap: [
     AppComponent

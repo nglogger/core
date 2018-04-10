@@ -1,7 +1,7 @@
 'use strict';
 /* tslint:disable:ter-padded-blocks max-classes-per-file */
 /* Imports */
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, InjectionToken } from '@angular/core';
 
 import { Transport } from './transport';
 
@@ -44,6 +44,10 @@ export interface ScopedLoggerLevels {
 export interface Scopable {
   scope(scope: Scope): ScoppedLogger;
 }
+
+
+/* Constants */
+export const TRANSPORTS = new InjectionToken<Transport[]>('transports');
 
 
 /* Helpers */
@@ -94,8 +98,8 @@ export class ScoppedLogger implements ScopedLoggerLevels, Scopable {
 @Injectable()
 export class Logger implements LoggerLevels, Scopable {
   constructor(
-    private _transports: Transport[]
-  ) {}
+    @Inject(TRANSPORTS) private _transports: Transport[]
+  ) { }
 
   fatal(scope: Scope, subject: string, meta?: Meta): void {
     return this._log('fatal', scope, subject, meta);
